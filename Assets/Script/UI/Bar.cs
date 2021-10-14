@@ -6,12 +6,17 @@ using UnityEngine.UI;
 namespace game {
     public class Bar : MonoBehaviour
     {
+        public bool isMainBar;
         public GameObject prfBar;
         public Canvas canvas;
 
         public float barYPrefix;
 
         private GameObject bar;
+        public GameObject GameObject
+        {
+            get => bar;
+        }
         private RectTransform barTransform;
         private Image curBar;
 
@@ -21,7 +26,7 @@ namespace game {
         // Start is called before the first frame update
         void Start()
         {
-            bar = Instantiate(prfBar, canvas.transform);
+            bar = isMainBar ? prfBar : Instantiate(prfBar, canvas.transform);
             barTransform = bar.GetComponent<RectTransform>();
             curBar = barTransform.transform.GetChild(0).GetComponent<Image>();
         }
@@ -29,11 +34,14 @@ namespace game {
         // Update is called once per frame
         void Update()
         {
-            Vector3 barPos = Camera.main.WorldToScreenPoint(
-                new Vector3(transform.position.x, transform.position.y + barYPrefix));
-            barTransform.position = barPos;
+            if (!isMainBar)
+            {
+                Vector3 barPos = Camera.main.WorldToScreenPoint(
+                    new Vector3(transform.position.x, transform.position.y + barYPrefix));
+                barTransform.position = barPos;
+            }
             curBar.fillAmount = progress / 100;
-            //Debug.Log($"curBar is set to {curBar.fillAmount}");
+            Debug.Log($"curBar is set to {curBar.fillAmount}");
         }
 
         protected void ChildUpdate() { Update(); }

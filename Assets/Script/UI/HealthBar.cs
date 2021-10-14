@@ -38,7 +38,8 @@ namespace game
             {
                 int modifier = (int)Mathf.Abs(healthRatio - Progress) / 10;
                 modifier = modifier == 0 ? 1 : modifier;
-                if (Progress > healthRatio) Progress -= modifier;
+                if (Mathf.Abs(Progress - healthRatio) < modifier) Progress = healthRatio;
+                else if (Progress > healthRatio) Progress -= modifier;
                 else Progress += modifier;
             }
         }
