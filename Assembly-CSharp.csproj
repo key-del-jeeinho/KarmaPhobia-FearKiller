@@ -64,8 +64,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Script\Attack\AttackReach.cs" />
+    <Compile Include="Assets\Script\Attack\AttackType.cs" />
     <Compile Include="Assets\Script\Configuration\UIConfiguration.cs" />
     <Compile Include="Assets\Script\Data\ContollKey.cs" />
+    <Compile Include="Assets\Script\Data\MonsterProps.cs" />
     <Compile Include="Assets\Script\Data\PlayerInput.cs" />
     <Compile Include="Assets\Script\Data\PlayerLevel.cs" />
     <Compile Include="Assets\Script\Data\PlayerProps.cs" />
@@ -74,6 +77,8 @@
     <Compile Include="Assets\Script\Entity\Entity.cs" />
     <Compile Include="Assets\Script\Entity\Monster.cs" />
     <Compile Include="Assets\Script\Entity\Player.cs" />
+    <Compile Include="Assets\Script\Manager\BackgroundManager.cs" />
+    <Compile Include="Assets\Script\Manager\CameraManager.cs" />
     <Compile Include="Assets\Script\UI\Bar.cs" />
     <Compile Include="Assets\Script\UI\HealthBar.cs" />
     <Compile Include="Assets\Script\UI\LevelBar.cs" />
