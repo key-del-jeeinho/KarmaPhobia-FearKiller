@@ -9,9 +9,11 @@ namespace game
         private bool isControllInit;
         private ControllKey controlls;
         public KeyCode jump;
+        public KeyCode sprint;
         public KeyCode moveLeft;
         public KeyCode moveRight;
-        public KeyCode attack;
+        public KeyCode slash;
+        public KeyCode lunge;
 
         private bool isStatInit;
         private Stat stat;
@@ -27,7 +29,7 @@ namespace game
         {
             if (!isControllInit)
             {
-                controlls = new ControllKey(jump, moveLeft, moveRight, attack);
+                controlls = new ControllKey(sprint, jump, moveLeft, moveRight, slash, lunge);
                 isControllInit = true;
             }
             return controlls;
