@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace game
 {
-    public class Actor : Entity
+    public abstract class Actor : Entity
     {
         protected Stat stat;
         public Stat Stat
@@ -12,6 +12,8 @@ namespace game
             get { return stat; }
             set { stat = value; }
         }
+
+        protected abstract void Die();
 
         // Start is called before the first frame update
         void Start()
