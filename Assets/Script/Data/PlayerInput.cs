@@ -11,4 +11,6 @@ public struct PlayerInput
     public bool MoveLeft { get; set; }
 
     public bool Sprint { get; set; }
+
+    public bool Run { get; set; }
 }

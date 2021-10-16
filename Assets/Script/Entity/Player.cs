@@ -7,7 +7,7 @@ namespace game
     {
         public Vector3 spawnpoint;
         public AttackReach lungeReach;
-        public AttackReach slashLeach;
+        public AttackReach slashReach;
 
         protected PlayerInput inputs;
         protected ControllKey controlls;
@@ -19,19 +19,24 @@ namespace game
 
         private HealthBar hpBar;
         private LevelBar lvBar;
+        private StaminaBar staminaBar;
         private int healthPoint;
-        private int hp {
+        public int Hp {
             get => healthPoint;
             set
             {
                 healthPoint = value;
                 hpBar.CurHealth = healthPoint;
+                if (healthPoint <= 0)
+                    Die();
+                else Debug.Log($"{genId}:{Id} 의 현재체력 : {hpBar.CurHealth}");
             }
         }
 
         // Start is called before the first frame update
         void Start()
         {
+            Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Player"), LayerMask.NameToLayer("Monster"), true); //몬스터와의 충돌로 밀리는것을 방지한다
             transform.position = spawnpoint;
 
             inputs = new PlayerInput();
@@ -41,6 +46,7 @@ namespace game
             initUnityComponents();
             initData();
             initBars();
+            InvokeRepeating("restoreStamina", 0, 1);
         }
 
         private void initData()
@@ -75,10 +81,11 @@ namespace game
         {
             hpBar = GetComponent<HealthBar>();
             lvBar = GetComponent<LevelBar>();
+            staminaBar = GetComponent<StaminaBar>();
 
             hpBar.MaxHealth = stat.Hp;
-            hp = hpBar.MaxHealth; //현재 체력을 100% 로 설정한다
-            hpBar.CurHealth = hp;
+            Hp = hpBar.MaxHealth; //현재 체력을 100% 로 설정한다
+            hpBar.CurHealth = Hp;
 
             lvBar.RequireExp = level.RequireExp;
             lvBar.CurExp = 0;
@@ -87,6 +94,11 @@ namespace game
         // Update is called once per frame
         void Update()
         {
+            lvBar.CurExp = level.CurExp;
+            lvBar.RequireExp = level.RequireExp;
+            Debug.Log($"BarExp = {lvBar.CurExp} RealExp : {level.CurExp}");
+            //Debug.Log(staminaBar.CurStamina);
+            animator.SetInteger("Stamina", (int)(staminaBar.CurStamina * 100));
             //Box Cast 를 통한 점핑 여부 판정
             RaycastHit2D raycastHit = Physics2D.BoxCast(col2D.bounds.center, col2D.bounds.size, 0f, Vector2.down, 0.02f, LayerMask.GetMask("Platform"));
             if (raycastHit.collider != null)
@@ -102,7 +114,8 @@ namespace game
             else animator.SetBool("isMove", false);
             //달리기
             if (Input.GetKey(controlls.Sprint))
-                inputs.Jump = true;
+                inputs.Run = true;
+            else animator.SetBool("isSprint", false);
             //점프 
             if (Input.GetKey(controlls.Jump) && !isDuringJump())
                 inputs.Jump = true;
@@ -119,6 +132,11 @@ namespace game
                 float animDelay = getAnimationDelay("Lunge");
                 Invoke("Lunge", animDelay);
             }
+        }
+
+        private void restoreStamina()
+        {
+            staminaBar.CurStamina += 4; //초당 4씩 회복
         }
 
         private float getAnimationDelay(string animName)
@@ -142,35 +160,20 @@ namespace game
             {
                 dmg = (int)(dmg * critDmgMul);
             }
-            obj.SendMessage("Attacked", dmg * 2);
+            obj.SendMessage("Attacked", dmg);
         }
 
-        private void Slash()
+        void Attacked(int dmg)
         {
-
-            foreach (GameObject obj in slashLeach.Monsters)
+            if (((int)(new System.Random().NextDouble() * 100)) < stat.Speed)
             {
-                int dmg = stat.Atk * 2;
-                float critDmgMul = 2F;
-                float critPer = 0.1F;
-                if (isDuringJump())
-                {
-                    dmg += 30;
-                    critPer -= 0.05F;
-                }
-                Attack(obj, dmg, critDmgMul, critPer);
+                Debug.Log("회피하였습니다! (슈욱, 슉, 슈슉)");
+                return; //회피율
             }
+            Debug.Log($"공격당헀습니다! {dmg - stat.Def}");
+            Hp -= (dmg - stat.Def);
         }
 
-        private void Lunge()
-        {
-            foreach (GameObject obj in lungeReach.Monsters)
-            {
-                if (isDuringJump()) return;
-                Attack(obj, stat.Atk, 5F, 0.3F);
-            }
-
-        }
 
         private bool isDuringJump()
         {
@@ -200,31 +203,106 @@ namespace game
             }
         }
 
-        void doAttack(Monster monster, AttackType atkType)
+        private void Slash()
         {
-            Debug.Log($"{monster.genId}" + "를 공격하였습니다" + $" [{atkType}]");
+
+            foreach (GameObject obj in slashReach.Targets)
+            {
+                int dmg = stat.Atk * 2;
+                float critDmgMul = 2F;
+                float critPer = 0.1F;
+                if (isDuringJump())
+                {
+                    dmg += 30;
+                    critPer -= 0.05F;
+                }
+                Attack(obj, dmg, critDmgMul, critPer);
+            }
+        }
+
+        private void Lunge()
+        {
+            foreach (GameObject obj in lungeReach.Targets)
+            {
+                if (isDuringJump()) return;
+                Attack(obj, stat.Atk, 5F, 0.3F);
+            }
+
         }
 
         void FixedUpdate()
         {
+            int runStamina = 20, runInitStamina = 50;
             if (inputs.MoveRight)
             {
                 transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
                 animator.SetBool("isMove", true);
-                transform.Translate(Vector3.right * Time.deltaTime * stat.Speed);
+
+                float speed = stat.Speed;
+
+                if (inputs.Run)
+                {
+                    if (staminaBar.CurStamina > runInitStamina)
+                    {
+                        staminaBar.CurStamina -= Time.deltaTime * runStamina;
+                        animator.SetBool("isSprint", true);
+                        speed *= 2;
+                    }
+                    else if (staminaBar.CurStamina < Time.deltaTime * runStamina)
+                    {
+                        animator.SetBool("isSprint", false);
+                    }
+                    else if (animator.GetBool("isSprint"))
+                    {
+                        speed *= 2;
+                        staminaBar.CurStamina -= Time.deltaTime * runStamina;
+                    }
+                }
+
+                transform.Translate(Vector3.right * Time.deltaTime * speed);
+
                 inputs.MoveRight = false;
+                inputs.Run = false;
             }
             if (inputs.MoveLeft)
             {
                 transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
                 animator.SetBool("isMove", true);
-                transform.Translate(Vector3.left * Time.deltaTime * stat.Speed);
+
+                float speed = stat.Speed;
+
+
+                if (inputs.Run)
+                {
+                    if (staminaBar.CurStamina > runInitStamina)
+                    {
+                        staminaBar.CurStamina -= Time.deltaTime * runStamina;
+                        animator.SetBool("isSprint", true);
+                        speed *= 2;
+                    }
+                    else if (staminaBar.CurStamina < Time.deltaTime * runStamina)
+                    {
+                        animator.SetBool("isSprint", false);
+                    }
+                    else if (animator.GetBool("isSprint"))
+                    {
+                        speed *= 2;
+                        staminaBar.CurStamina -= Time.deltaTime * runStamina;
+                    }
+                }
+
+                transform.Translate(Vector3.left * Time.deltaTime * speed);
+
                 inputs.MoveLeft = false;
+                inputs.Run = false;
             }
-            if (inputs.Jump)
+            int jumpStemina = 10;
+            if (inputs.Jump && staminaBar.CurStamina >= jumpStemina)
             {
-                inputs.Jump = false;
+                staminaBar.CurStamina -= jumpStemina;
+                Debug.Log("Jumped!");
                 rigid2D.velocity = new Vector2(rigid2D.velocity.x, stat.JumpPower);
+                inputs.Jump = false;
             }
         }
 
@@ -236,7 +314,16 @@ namespace game
             Destroy(GetComponent<Rigidbody2D>());       // 중력 비활성화
             Destroy(gameObject, 3);                     // 3초후 제거
             Destroy(hpBar.GameObject, 3);               // 3초후 체력바 제거
+            Destroy(lvBar.GameObject, 3);               // 3초후 체력바 제거
+            Destroy(staminaBar.GameObject, 3);               // 3초후 체력바 제거
+            enabled = false;
             //Destroy(nameTagTransform.gameObject, 3);
+        }
+
+        void Killed(GameObject victim)
+        {
+            if (victim.tag.Equals("Monster"))
+                level.addExp(victim.GetComponent<Monster>().exp);
         }
     }
 }

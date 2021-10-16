@@ -21,6 +21,7 @@ public class CameraManager : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (target == null) return;
         Vector3 desiredPosition = new Vector3(
             Mathf.Clamp(target.position.x + offset.x, limitMinX + cameraHalfWidth, limitMaxX - cameraHalfWidth),   // X
             Mathf.Clamp(target.position.y + offset.y, limitMinY + cameraHalfHeight, limitMaxY - cameraHalfHeight), // Y

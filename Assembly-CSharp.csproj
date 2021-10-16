@@ -64,6 +64,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Script\AI\MonsterStandardAI.cs" />
     <Compile Include="Assets\Script\Attack\AttackReach.cs" />
     <Compile Include="Assets\Script\Attack\AttackType.cs" />
     <Compile Include="Assets\Script\Configuration\UIConfiguration.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Assets\Script\UI\Bar.cs" />
     <Compile Include="Assets\Script\UI\HealthBar.cs" />
     <Compile Include="Assets\Script\UI\LevelBar.cs" />
+    <Compile Include="Assets\Script\UI\StaminaBar.cs" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/kk/Desktop/Desktop/GSM/2021/교과목/응용프로그래밍(Unity)/KarmaPhobia-FearKiller/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>

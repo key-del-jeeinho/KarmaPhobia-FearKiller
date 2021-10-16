@@ -16,7 +16,7 @@ namespace game
         // Update is called once per frame
         void Update()
         {
-            transform.position.Set(target.position.x, target.position.y, 0);
+            transform.position = new Vector3(target.position.x, target.position.y, 0);
         }
     }
 }

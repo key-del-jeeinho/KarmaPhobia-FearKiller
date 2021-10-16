@@ -47,10 +47,11 @@ namespace game
 
         private void levelUp(int overExp)
         {
+            Debug.Log($"레벨업하였습니다! 레벨 : {level}");
             level = nextLevel.level;
             requireExp = nextLevel.requireExp;
-            curExp = overExp;
             nextLevel = nextLevel.nextLevel;
+            addExp(overExp);
         }
 
         public void addExp(int exp)

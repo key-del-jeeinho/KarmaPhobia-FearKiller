@@ -7,9 +7,10 @@ namespace game
 {
     public class Monster : Actor
     {
-        private Animator animator;
+        public int exp;
 
         private HealthBar hpBar;
+        
         private int healthPoint;
         private int hp
         {
@@ -22,6 +23,13 @@ namespace game
                     Die();
                 else Debug.Log($"현재체력 : {hpBar.CurHealth}");
             }
+        }
+
+        private Animator animator;
+        public Animator Animator
+        {
+            get => animator;
+            set => animator = value;
         }
 
         // Start is called before the first frame update
@@ -72,12 +80,13 @@ namespace game
         protected override void Die()
         {
             animator.SetTrigger("Death");            // die 애니메이션 실행
-            //GetComponent<MonsterAI>().enabled = false;    // 추적 비활성화
+            GetComponent<MonsterStandardAI>().enabled = false;    // 추적 비활성화
             GetComponent<Collider2D>().enabled = false; // 충돌체 비활성화
             Destroy(GetComponent<Rigidbody2D>());       // 중력 비활성화
             Destroy(gameObject, 3);                     // 3초후 제거
             Destroy(hpBar.GameObject, 3);               // 3초후 체력바 제거
             //Destroy(nameTagTransform.gameObject, 3);
+            GameObject.FindGameObjectWithTag("Player").SendMessage("Killed", gameObject);
         }
     }
 }

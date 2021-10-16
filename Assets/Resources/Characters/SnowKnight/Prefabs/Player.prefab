@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1821086945527101677}
   - component: {fileID: 7506972695449888471}
   - component: {fileID: 288774595396960013}
+  - component: {fileID: 1730097246251260910}
   - component: {fileID: 540774603281374448}
   - component: {fileID: 4259232331703475796}
   - component: {fileID: 1821086945527101462}
@@ -147,6 +148,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   genId: 0
   spawnpoint: {x: 0, y: 0, z: 0}
+  lungeReach: {fileID: 0}
+  slashLeach: {fileID: 0}
+--- !u!114 &1730097246251260910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1821086945527101676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f6724b4887ebed4593ac5324bbf4cfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isMainBar: 0
+  prfBar: {fileID: 0}
+  canvas: {fileID: 0}
+  barYPrefix: 0
 --- !u!114 &540774603281374448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,6 +178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5f1f507910843b4780774a0e3ff6325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isMainBar: 0
   prfBar: {fileID: 0}
   canvas: {fileID: 0}
   barYPrefix: 0
@@ -174,6 +194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bab99c1bf26d3f44bb7b2dd658aef0b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isMainBar: 0
   prfBar: {fileID: 0}
   canvas: {fileID: 0}
   barYPrefix: 0
