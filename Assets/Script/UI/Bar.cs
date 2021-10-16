@@ -41,7 +41,7 @@ namespace game {
                 barTransform.position = barPos;
             }
             curBar.fillAmount = progress / 100;
-            Debug.Log($"curBar is set to {curBar.fillAmount}");
+            //Debug.Log($"curBar is set to {curBar.fillAmount}");
         }
 
         protected void ChildUpdate() { Update(); }
